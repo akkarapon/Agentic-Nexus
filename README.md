@@ -6,6 +6,8 @@ Built for the modern AI engineer, it bridges the gap between LLM providers and a
 
 > **The Vision:** One command to deploy a full-scale AI workforce on your local machine.
 
+Status: Developing (not ready to use)
+
 ---
 
 ## ✨ Key Features
