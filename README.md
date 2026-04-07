@@ -95,10 +95,3 @@ We welcome contributions! Whether it's adding a new provider, improving the CLI 
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-### 💡 Pro-tip for P'Tan:
-In your `package.json`, make sure to set the `bin` field so that `npx` knows which file to execute. Also, for the "Setup with Prompt" feature, I highly recommend using the **`clack`** library (by the creators of Astro)—it provides a very modern, "clean" aesthetic for Node.js CLIs that fits perfectly with the **Agentic-Nexus** vibe.
-
-Do you want me to help you draft the `package.json` structure or the initial `init` logic for the CLI as well? ค่ะ! 😊
