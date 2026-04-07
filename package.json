@@ -1,0 +1,45 @@
+{
+  "name": "agentic-nexus",
+  "version": "0.1.0",
+  "description": "A modular AI Agent orchestrator — run AI agents locally with a single command.",
+  "type": "module",
+  "bin": {
+    "agentic-nexus": "./bin/nexus.js"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "templates"
+  ],
+  "keywords": [
+    "ai",
+    "agent",
+    "orchestrator",
+    "llm",
+    "docker",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "commander": "^12.1.0",
+    "execa": "^9.3.0",
+    "picocolors": "^1.1.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.7",
+    "typescript": "^5.5.2"
+  }
+}
