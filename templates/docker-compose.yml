@@ -12,6 +12,7 @@ volumes:
   paperclip_data:
   openclaw_data:
 
+
 services:
   # ────────────────────────────────────────────────────
   # Paperclip — Orchestrator Agent
@@ -19,7 +20,7 @@ services:
   # worker agents over the agentic_nexus_bridge network.
   # ────────────────────────────────────────────────────
   paperclip:
-    image: ghcr.io/akkappsoft/paperclip:latest
+    image: ./docker/paperclip # TODO: change to local image
     container_name: paperclip
     restart: unless-stopped
     env_file:
@@ -38,7 +39,7 @@ services:
       openclaw:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -49,7 +50,7 @@ services:
   # Executes atomic tasks delegated by Paperclip.
   # ────────────────────────────────────────────────────
   openclaw:
-    image: ghcr.io/akkappsoft/openclaw:latest
+    image: ./docker/openclaw # TODO: change to local image
     container_name: openclaw
     restart: unless-stopped
     env_file:
@@ -64,7 +65,7 @@ services:
     networks:
       - agentic_nexus_bridge
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8001/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
