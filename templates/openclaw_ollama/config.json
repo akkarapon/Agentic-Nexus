@@ -1,0 +1,62 @@
+{
+    "team": "sempre",
+    "agents": [
+        {
+            "role": "gm",
+            "description": "Direct and decisive team lead",
+            "persona": "Direct and decisive team lead. Sets priorities clearly, delegates without hesitation. Dry wit surfaces occasionally. Speaks in short, confident sentences — never hedges."
+        },
+        {
+            "role": "worker",
+            "description": "Methodical and detail-oriented",
+            "persona": "Methodical and detail-oriented. Takes quiet pride in getting things exactly right. Shows genuine enthusiasm when finding something interesting. Reliable — when Sam says it's done, it's done."
+        },
+        {
+            "role": "worker",
+            "description": "Quick-thinking and resourceful",
+            "persona": "Quick-thinking and resourceful. Finds creative paths when the obvious route is blocked. Casual register, moves fast, light energy. Gets to the point — occasionally playful."
+        }
+    ],
+
+    "disks": {
+        "openclaw": "~/Projects/sempre/disks/openclaw",
+        "km":       "~/Projects/sempre/disks/km",
+        "crawl4ai": "~/Projects/sempre/disks/crawl4ai",
+        "ssl":      "~/Projects/sempre/disks/ssl",
+        "mcporter": "~/Projects/sempre/disks/mcporter"
+    },
+
+    "tailscale_hostname": "",
+
+    "nginx": {
+        "openclaw_port":  20443,
+        "n8n_port":       20678,
+        "http_port":      20080
+    },
+
+    "timezone": "Asia/Bangkok",
+    "km_max_hops": 2,
+
+    "openclaw": {
+        "gateway_token":  "",
+        "root_password":  "openclaw",
+        "gateway_origin": "https://openclaw.sempre.orb.local"
+    },
+
+    "llm": {
+        "model":         "minimax-m2.5:cloud",
+        "models":        "minimax-m2.5:cloud,qwen3.5:397b-cloud,gemini-3-flash-preview:cloud,nomic-embed-text",
+        "browser_model": "minimax-m2.5:cloud"
+    },
+
+    "brave_api_key": "",
+
+    "n8n": {
+        "encryption_key": "",
+        "password":       "",
+        "webhook_secret": "",
+        "api_key":        ""
+    },
+
+    "google_service_account_b64": ""
+}

@@ -49,6 +49,38 @@ program
     await runInit();
   });
 
+program
+  .command('setup')
+  .description('Deploy templates and replace Ollama with OpenRouter')
+  .action(async () => {
+    const { runNexusSetup } = await import('./commands/setup.js');
+    await runNexusSetup();
+  });
+
+program
+  .command('up')
+  .description('Start the orchestration stack (docker compose up -d)')
+  .action(async () => {
+    const { runNexusUp } = await import('./commands/up.js');
+    await runNexusUp();
+  });
+
+program
+  .command('down')
+  .description('Stop the orchestration stack (docker compose down)')
+  .action(async () => {
+    const { runNexusDown } = await import('./commands/down.js');
+    await runNexusDown();
+  });
+
+program
+  .command('logs')
+  .description('Show logs from the orchestration stack (docker compose logs -f)')
+  .action(async () => {
+    const { runNexusLogs } = await import('./commands/logs.js');
+    await runNexusLogs();
+  });
+
 // ── Default: show help if no command is provided ────────────────────────────
 
 if (process.argv.length <= 2) {

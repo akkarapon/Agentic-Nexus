@@ -1,0 +1,34 @@
+{
+    "name": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
+    "description": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
+    "version": "1.0.0",
+    "author": "Akkappsoft",
+    "license": "MIT",
+    "files": [
+        "docker/*"
+    ],
+    "prompts": {
+        "environments": [
+            {
+                "name": "OPENCLAW_GATEWAY_TOKEN",
+                "type": "password",
+                "description": "OpenClaw Gateway Token",
+                "configKey": "openclaw.gateway_token",
+                "required": true
+            },
+            {
+                "name": "TAILSCALE_HOSTNAME",
+                "type": "text",
+                "description": "Tailscale Hostname",
+                "configKey": "tailscale_hostname",
+                "required": true
+            },
+            {
+                "name": "BETTER_AUTH_SECRET",
+                "type": "password",
+                "description": "Better Auth Secret",
+                "required": true
+            }
+        ]
+    }
+}
