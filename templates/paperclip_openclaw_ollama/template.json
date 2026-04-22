@@ -1,11 +1,14 @@
 {
-    "name": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
-    "description": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
+    "name": "Paperclip + OpenClaw + Ollama (Local & Cloud)",
+    "description": "Paperclip + OpenClaw + Ollama (Local & Cloud)",
     "version": "1.0.0",
     "author": "Akkappsoft",
     "license": "MIT",
     "files": [
-        "docker/*"
+        "docker/*",
+        "data/*",
+        "docker-compose.yml",
+        ".env.tpl"
     ],
     "prompts": [
         {
@@ -23,7 +26,8 @@
         {
             "name": "BETTER_AUTH_SECRET",
             "type": "password",
-            "description": "Better Auth Secret"
+            "description": "Better Auth Secret",
+            "command": ""
         }
     ]
 }

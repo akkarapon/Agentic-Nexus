@@ -16,6 +16,38 @@ export interface CheckResult {
 }
 
 // ---------------------------------------------------------------------------
+// Homebrew Check
+// ---------------------------------------------------------------------------
+
+export async function checkHomebrew(): Promise<CheckResult> {
+  try {
+    const { stdout } = await execa('brew', ['--version']);
+    const version = stdout.split('\n')[0]; // "Homebrew 4.x.x"
+    return {
+      ok: true,
+      label: 'Homebrew',
+      message: `${version}`,
+    };
+  } catch {
+    return {
+      ok: false,
+      label: 'Homebrew',
+      message: 'Not found.',
+      hint: 'Install Homebrew: https://brew.sh',
+    };
+  }
+}
+
+/** Install Homebrew via the official install script */
+export async function installHomebrew(): Promise<void> {
+  await execa(
+    '/bin/bash',
+    ['-c', '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'],
+    { stdio: 'inherit' }
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Node.js Version Check
 // ---------------------------------------------------------------------------
 
@@ -37,27 +69,34 @@ export function checkNodeVersion(): CheckResult {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Homebrew Check
-// ---------------------------------------------------------------------------
-
-export async function checkHomebrew(): Promise<CheckResult> {
+/** Check whether Node.js is installed at all (used when running via a wrapper) */
+export async function checkNodeInstalled(): Promise<CheckResult> {
   try {
-    const { stdout } = await execa('brew', ['--version']);
-    const version = stdout.split('\n')[0]; // "Homebrew 4.x.x"
+    const { stdout } = await execa('node', ['--version']);
+    const raw = stdout.trim();
+    const major = parseInt(raw.replace('v', '').split('.')[0], 10);
+    const ok = major >= NODE_MIN_MAJOR;
     return {
-      ok: true,
-      label: 'Homebrew',
-      message: `${version}`,
+      ok,
+      label: 'Node.js',
+      message: ok
+        ? `${raw} — meets the minimum requirement (v${NODE_MIN_MAJOR}+)`
+        : `${raw} — too old. Please upgrade to Node.js v${NODE_MIN_MAJOR} or later.`,
+      hint: ok ? undefined : 'Run: brew install node',
     };
   } catch {
     return {
       ok: false,
-      label: 'Homebrew',
+      label: 'Node.js',
       message: 'Not found.',
-      hint: 'Install Homebrew: https://brew.sh',
+      hint: 'Run: brew install node',
     };
   }
+}
+
+/** Install Node.js via Homebrew */
+export async function installNode(): Promise<void> {
+  await execa('brew', ['install', 'node'], { stdio: 'inherit' });
 }
 
 // ---------------------------------------------------------------------------
@@ -83,14 +122,19 @@ export async function checkDocker(): Promise<CheckResult> {
   }
 }
 
+/** Install OrbStack via Homebrew */
+export async function installOrbStack(): Promise<void> {
+  await execa('brew', ['install', 'orbstack'], { stdio: 'inherit' });
+}
+
 // ---------------------------------------------------------------------------
-// Run All Checks
+// Run All Checks (legacy – non-interactive summary)
 // ---------------------------------------------------------------------------
 
 export async function runAllChecks(): Promise<CheckResult[]> {
-  const [nodeResult, brewResult, dockerResult] = await Promise.all([
-    Promise.resolve(checkNodeVersion()),
+  const [brewResult, nodeResult, dockerResult] = await Promise.all([
     checkHomebrew(),
+    Promise.resolve(checkNodeVersion()),
     checkDocker(),
   ]);
 

@@ -1,42 +1,31 @@
+/**
+ * src/utils/docker-ops.ts
+ *
+ * Docker / runtime configuration utilities.
+ * Handles config.json generation, .env.generated, and docker-compose.override.yml.
+ *
+ * Template-related utilities (discovery, prompts, file rendering) have been
+ * moved to src/utils/template.ts.
+ */
+
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import pc from 'picocolors';
-import { fileURLToPath } from 'node:url';
-import { glob } from 'glob';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Types — Template
-// ──────────────────────────────────────────────────────────────────────────────
-
-export interface TemplateEnvPrompt {
-  name: string;
-  type: 'text' | 'password';
-  description: string;
-  /** Dotted path into config.json (e.g. "openclaw.gateway_token"). If set,
-   *  the collected value will also be written into the generated config.json. */
-  configKey?: string;
-  required?: boolean;
-}
-
-export interface TemplateDefinition {
-  name: string;
-  description?: string;
-  version?: string;
-  author?: string;
-  license?: string;
-  files: string[];
-  prompts: {
-    environments: TemplateEnvPrompt[];
-  };
-}
-
-export interface DiscoveredTemplate {
-  id: string; // folder name inside /templates
-  definition: TemplateDefinition;
-}
+// Re-export template utilities for backward compatibility
+export {
+  type TemplatePrompt,
+  type TemplateEnvPrompt,
+  type TemplateDefinition,
+  type DiscoveredTemplate,
+  templatesRootPath,
+  getNestedValue,
+  discoverTemplates,
+  loadTemplateBaseConfig,
+  deployTemplateFiles,
+  deployTemplateFilesWithRendering,
+} from './template.js';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Types — config.json (merged)
@@ -66,10 +55,6 @@ export interface SelectedAgent extends AgentDefinition {
 // Path helpers
 // ──────────────────────────────────────────────────────────────────────────────
 
-export function templatesRootPath(): string {
-  return path.resolve(__dirname, '../../templates');
-}
-
 function cwdPath(file: string): string {
   return path.resolve(process.cwd(), file);
 }
@@ -78,6 +63,10 @@ function expandHome(p_: string): string {
   if (p_.startsWith('~/')) return path.join(os.homedir(), p_.slice(2));
   return p_;
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Nested value helper (for mutating config objects)
+// ──────────────────────────────────────────────────────────────────────────────
 
 /** Set a value at a dotted path inside a plain object (mutates in-place). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -94,94 +83,7 @@ function setNestedValue(obj: Record<string, any>, dotPath: string, value: string
   current[keys[keys.length - 1]] = value;
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Template discovery
-// ──────────────────────────────────────────────────────────────────────────────
-
-export function discoverTemplates(): DiscoveredTemplate[] {
-  const root = templatesRootPath();
-  if (!fs.existsSync(root)) return [];
-
-  const discovered: DiscoveredTemplate[] = [];
-
-  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-
-    const jsonPath = path.join(root, entry.name, 'template.json');
-    if (!fs.existsSync(jsonPath)) continue;
-
-    try {
-      const raw = fs.readFileSync(jsonPath, 'utf-8');
-      const definition: TemplateDefinition = JSON.parse(raw);
-      discovered.push({ id: entry.name, definition });
-    } catch {
-      // Skip malformed template.json files
-    }
-  }
-
-  return discovered;
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Load base config.json from a template folder
-// ──────────────────────────────────────────────────────────────────────────────
-
-export function loadTemplateBaseConfig(templateId: string): BaseConfig {
-  const configPath = path.join(templatesRootPath(), templateId, 'config.json');
-
-  if (!fs.existsSync(configPath)) {
-    throw new Error(`config.json not found in template "${templateId}".`);
-  }
-
-  return JSON.parse(fs.readFileSync(configPath, 'utf-8')) as BaseConfig;
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Deploy template files  (supports wildcard patterns via glob)
-// ──────────────────────────────────────────────────────────────────────────────
-
-export async function deployTemplateFiles(
-  templateId: string,
-  filePatterns: string[],
-): Promise<void> {
-  const templateRoot = path.join(templatesRootPath(), templateId);
-
-  for (const pattern of filePatterns) {
-    const matched = await glob(pattern, {
-      cwd: templateRoot,
-      dot: true,
-      nodir: false,
-    });
-
-    if (matched.length === 0) {
-      console.log(pc.yellow(`⚠  No files matched pattern: ${pattern}`));
-      continue;
-    }
-
-    for (const relFile of matched) {
-      const src = path.join(templateRoot, relFile);
-      const dest = cwdPath(relFile);
-
-      if (!fs.existsSync(src)) continue;
-
-      if (fs.existsSync(dest)) {
-        console.log(pc.yellow(`⚠  Already exists, skipping: ${relFile}`));
-        continue;
-      }
-
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
-
-      const stat = fs.statSync(src);
-      if (stat.isDirectory()) {
-        fs.cpSync(src, dest, { recursive: true });
-        console.log(pc.green(`✔  Copied directory  ${relFile}`));
-      } else {
-        fs.copyFileSync(src, dest);
-        console.log(pc.green(`✔  Copied file       ${relFile}`));
-      }
-    }
-  }
-}
+export { setNestedValue };
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Write .env file  (for env vars that have no configKey)
@@ -236,7 +138,7 @@ export function generateRuntimeFiles(
 
   const envLines: string[] = [
     '# AUTO-GENERATED by Agentic-Nexus — DO NOT EDIT',
-    '# Regenerate: nexus setup',
+    '# Regenerate: nexus init',
     '',
     `TEAM_NAME=${cfg.team ?? ''}`,
     '',
@@ -288,7 +190,7 @@ export function generateRuntimeFiles(
   // ── 3. docker-compose.override.yml ─────────────────────────────────────────
   const composeLines: string[] = [
     '# AUTO-GENERATED by Agentic-Nexus — DO NOT EDIT MANUALLY',
-    '# Regenerate: nexus setup',
+    '# Regenerate: nexus init',
     '',
     'services:',
     '',
@@ -366,5 +268,3 @@ export function generateRuntimeFiles(
     fs.mkdirSync(expandHome(diskPath), { recursive: true });
   }
 }
-
-export { setNestedValue };

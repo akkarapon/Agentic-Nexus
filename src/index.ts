@@ -49,13 +49,6 @@ program
     await runInit();
   });
 
-program
-  .command('setup')
-  .description('Deploy templates and replace Ollama with OpenRouter')
-  .action(async () => {
-    const { runNexusSetup } = await import('./commands/setup.js');
-    await runNexusSetup();
-  });
 
 program
   .command('up')
