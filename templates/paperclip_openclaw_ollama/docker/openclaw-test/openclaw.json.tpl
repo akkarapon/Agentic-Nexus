@@ -62,19 +62,6 @@
             }
         }
     },
-    "channels": {
-        "discord": {
-            "enabled": true,
-            "groupPolicy": "allowlist",
-            "streaming": "off",
-            "accounts": {
-                "default": {
-                    "groupPolicy": "allowlist",
-                    "streaming": "off"
-                }
-            }
-        }
-    },
     "gateway": {
         "port": 18789,
         "mode": "local",
@@ -83,8 +70,7 @@
         "controlUi": {
             "allowInsecureAuth": true,
             "allowedOrigins": [
-                "http://localhost:18789",
-                "${GATEWAY_ORIGIN}"${GATEWAY_ORIGINS_EXTRA_JSON}
+                "http://localhost:18789"
             ]
         },
         "auth": {

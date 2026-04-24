@@ -7,10 +7,17 @@
     "files": [
         "docker/*",
         "data/*",
-        "docker-compose.yml",
-        ".env.tpl"
+        ".env.tpl",
+        "docker-compose.yml"
     ],
     "prompts": [
+        {
+            "name": "USER_TIMEZONE",
+            "type": "text",
+            "description": "User Timezone",
+            "configKey": "timezone",
+            "default": "Asia/Bangkok"
+        },
         {
             "name": "OPENCLAW_GATEWAY_TOKEN",
             "type": "password",
@@ -28,6 +35,36 @@
             "type": "password",
             "description": "Better Auth Secret",
             "command": ""
+        },
+        {
+            "name": "OLLAMA_MODEL",
+            "type": "text",
+            "description": "Ollama Model",
+            "configKey": "llm.model"
+        },
+        {
+            "name": "OLLAMA_PROVIDER",
+            "type": "text",
+            "description": "Ollama Provider",
+            "configKey": "llm.provider"
+        },
+        {
+            "name": "OLLAMA_BASE_URL",
+            "type": "text",
+            "description": "Ollama Base URL",
+            "configKey": "llm.base_url"
+        },
+        {
+            "name": "OLLAMA_API_KEY",
+            "type": "password",
+            "description": "Ollama API Key",
+            "configKey": "llm.api_key"
+        },
+        {
+            "name": "OLLAMA_MODELS",
+            "type": "text",
+            "description": "Ollama Models",
+            "configKey": "llm.models"
         }
     ]
 }

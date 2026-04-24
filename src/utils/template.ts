@@ -29,9 +29,6 @@ export interface TemplatePrompt {
   command?: string;
 }
 
-/** @deprecated Use TemplatePrompt instead */
-export type TemplateEnvPrompt = TemplatePrompt;
-
 export interface TemplateDefinition {
   name: string;
   description?: string;

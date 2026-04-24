@@ -1,6 +1,6 @@
 {
-    "name": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
-    "description": "OpenClaw + Ollama (Local & Cloud) + Paperclip",
+    "name": "OpenClaw + Ollama (Local & Cloud)",
+    "description": "OpenClaw + Ollama (Local & Cloud)",
     "version": "1.0.0",
     "author": "Akkappsoft",
     "license": "MIT",

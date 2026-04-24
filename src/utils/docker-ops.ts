@@ -13,20 +13,6 @@ import os from 'node:os';
 import path from 'node:path';
 import pc from 'picocolors';
 
-// Re-export template utilities for backward compatibility
-export {
-  type TemplatePrompt,
-  type TemplateEnvPrompt,
-  type TemplateDefinition,
-  type DiscoveredTemplate,
-  templatesRootPath,
-  getNestedValue,
-  discoverTemplates,
-  loadTemplateBaseConfig,
-  deployTemplateFiles,
-  deployTemplateFilesWithRendering,
-} from './template.js';
-
 // ──────────────────────────────────────────────────────────────────────────────
 // Types — config.json (merged)
 // ──────────────────────────────────────────────────────────────────────────────
